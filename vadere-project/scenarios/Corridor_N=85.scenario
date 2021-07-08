@@ -1,5 +1,5 @@
 {
-  "name" : "Bottleneck_width=0.70",
+  "name" : "Corridor_N=85",
   "description" : "",
   "release" : "1.15",
   "processWriters" : {
@@ -15,6 +15,10 @@
       "type" : "org.vadere.simulator.projects.dataprocessing.outputfile.NoDataKeyOutputFile",
       "filename" : "overlapCount.txt",
       "processors" : [ 4 ]
+    }, {
+      "type" : "org.vadere.simulator.projects.dataprocessing.outputfile.TimestepPedestrianIdOutputFile",
+      "filename" : "out.txt",
+      "processors" : [ 5, 7 ]
     } ],
     "processors" : [ {
       "type" : "org.vadere.simulator.projects.dataprocessing.processor.FootStepProcessor",
@@ -31,6 +35,25 @@
       "attributesType" : "org.vadere.state.attributes.processor.AttributesNumberOverlapsProcessor",
       "attributes" : {
         "pedestrianOverlapProcessorId" : 3
+      }
+    }, {
+      "type" : "org.vadere.simulator.projects.dataprocessing.processor.PedestrianVelocityDefaultProcessor",
+      "id" : 5
+    }, {
+      "type" : "org.vadere.simulator.projects.dataprocessing.processor.PedestrianSpeedInAreaProcessorUsingAgentVelocity",
+      "id" : 6,
+      "attributesType" : "org.vadere.state.attributes.processor.AttributesSpeedInAreaProcessorUsingAgentVelocity",
+      "attributes" : {
+        "measurementAreaId" : 7,
+        "pedestrianVelocityDefaultProcessor" : 5
+      }
+    }, {
+      "type" : "org.vadere.simulator.projects.dataprocessing.processor.KNearestNeighborProcessor",
+      "id" : 7,
+      "attributesType" : "org.vadere.state.attributes.processor.AttributesKNearestNeighbor",
+      "attributes" : {
+        "measurementAreaId" : 7,
+        "kNearestNeigbors" : 5
       }
     } ],
     "isTimestamped" : true,
@@ -93,7 +116,7 @@
       }
     },
     "attributesSimulation" : {
-      "finishTime" : 50.0,
+      "finishTime" : 70.0,
       "simTimeStepLength" : 0.4,
       "realTimeSimTimeRatio" : 0.1,
       "writeSimulationData" : true,
@@ -101,7 +124,7 @@
       "printFPS" : false,
       "digitsPerCoordinate" : 2,
       "useFixedSeed" : true,
-      "fixedSeed" : 3831130375462475975,
+      "fixedSeed" : 3458278650785135818,
       "simulationSeed" : 0
     },
     "attributesPsychology" : {
@@ -116,7 +139,7 @@
         "bounds" : {
           "x" : 0.0,
           "y" : 0.0,
-          "width" : 20.0,
+          "width" : 18.0,
           "height" : 10.0
         },
         "boundingBoxWidth" : 0.5,
@@ -125,63 +148,45 @@
       },
       "obstacles" : [ {
         "shape" : {
-          "type" : "POLYGON",
-          "points" : [ {
-            "x" : 9.0,
-            "y" : 6.300000000000001
-          }, {
-            "x" : 9.0,
-            "y" : 5.9
-          }, {
-            "x" : 17.0,
-            "y" : 5.9
-          }, {
-            "x" : 17.0,
-            "y" : 5.35
-          }, {
-            "x" : 17.4,
-            "y" : 5.35
-          }, {
-            "x" : 17.4,
-            "y" : 6.3
-          }, {
-            "x" : 17.0,
-            "y" : 6.300000000000001
-          } ]
+          "x" : 1.0,
+          "y" : 6.0,
+          "width" : 16.0,
+          "height" : 0.2,
+          "type" : "RECTANGLE"
+        },
+        "id" : 3
+      }, {
+        "shape" : {
+          "x" : 1.0,
+          "y" : 4.0,
+          "width" : 16.0,
+          "height" : 0.2,
+          "type" : "RECTANGLE"
+        },
+        "id" : 4
+      }, {
+        "shape" : {
+          "x" : 0.8,
+          "y" : 4.0,
+          "width" : 0.2,
+          "height" : 2.2,
+          "type" : "RECTANGLE"
         },
         "id" : 5
       }, {
         "shape" : {
-          "type" : "POLYGON",
-          "points" : [ {
-            "x" : 9.0,
-            "y" : 3.7
-          }, {
-            "x" : 17.0,
-            "y" : 3.7
-          }, {
-            "x" : 17.4,
-            "y" : 3.7
-          }, {
-            "x" : 17.4,
-            "y" : 4.65
-          }, {
-            "x" : 17.0,
-            "y" : 4.65
-          }, {
-            "x" : 17.0,
-            "y" : 4.1000000000000005
-          }, {
-            "x" : 9.0,
-            "y" : 4.1000000000000005
-          } ]
+          "x" : 17.0,
+          "y" : 4.0,
+          "width" : 0.2,
+          "height" : 2.2,
+          "type" : "RECTANGLE"
         },
         "id" : 6
       } ],
       "measurementAreas" : [ {
         "shape" : {
-          "x" : 9.0,
-          "y" : 4.1,
+          "x" : 5.0,
+          "y" : 4.2,
           "width" : 8.0,
           "height" : 1.8,
           "type" : "RECTANGLE"
@@ -193,9 +198,9 @@
         "id" : 2,
         "absorbing" : true,
         "shape" : {
-          "x" : 17.4,
-          "y" : 4.1,
-          "width" : 1.2,
+          "x" : 16.0,
+          "y" : 4.2,
+          "width" : 1.0,
           "height" : 1.8,
           "type" : "RECTANGLE"
         },
@@ -213,14 +218,14 @@
         "id" : 1,
         "shape" : {
           "x" : 1.0,
-          "y" : 3.0,
-          "width" : 4.0,
-          "height" : 4.0,
+          "y" : 4.2,
+          "width" : 1.0,
+          "height" : 1.8,
           "type" : "RECTANGLE"
         },
         "interSpawnTimeDistribution" : "org.vadere.state.scenario.ConstantDistribution",
         "distributionParameters" : [ 1.0 ],
-        "spawnNumber" : 150,
+        "spawnNumber" : 85,
         "maxSpawnNumberTotal" : -1,
         "startTime" : 0.0,
         "endTime" : 0.0,

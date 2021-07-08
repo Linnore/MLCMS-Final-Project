@@ -1,5 +1,5 @@
 {
-  "name" : "Bottleneck_width=1.8",
+  "name" : "Bottleneck",
   "description" : "",
   "release" : "1.15",
   "processWriters" : {
@@ -15,6 +15,10 @@
       "type" : "org.vadere.simulator.projects.dataprocessing.outputfile.NoDataKeyOutputFile",
       "filename" : "overlapCount.txt",
       "processors" : [ 4 ]
+    }, {
+      "type" : "org.vadere.simulator.projects.dataprocessing.outputfile.TimestepPedestrianIdOutputFile",
+      "filename" : "out.txt",
+      "processors" : [ 6, 7 ]
     } ],
     "processors" : [ {
       "type" : "org.vadere.simulator.projects.dataprocessing.processor.FootStepProcessor",
@@ -31,6 +35,25 @@
       "attributesType" : "org.vadere.state.attributes.processor.AttributesNumberOverlapsProcessor",
       "attributes" : {
         "pedestrianOverlapProcessorId" : 3
+      }
+    }, {
+      "type" : "org.vadere.simulator.projects.dataprocessing.processor.PedestrianVelocityDefaultProcessor",
+      "id" : 5
+    }, {
+      "type" : "org.vadere.simulator.projects.dataprocessing.processor.PedestrianSpeedInAreaProcessorUsingAgentVelocity",
+      "id" : 6,
+      "attributesType" : "org.vadere.state.attributes.processor.AttributesSpeedInAreaProcessorUsingAgentVelocity",
+      "attributes" : {
+        "measurementAreaId" : 7,
+        "pedestrianVelocityDefaultProcessor" : 5
+      }
+    }, {
+      "type" : "org.vadere.simulator.projects.dataprocessing.processor.KNearestNeighborProcessor",
+      "id" : 7,
+      "attributesType" : "org.vadere.state.attributes.processor.AttributesKNearestNeighbor",
+      "attributes" : {
+        "measurementAreaId" : 7,
+        "kNearestNeigbors" : 5
       }
     } ],
     "isTimestamped" : true,
@@ -125,52 +148,40 @@
       },
       "obstacles" : [ {
         "shape" : {
-          "type" : "POLYGON",
-          "points" : [ {
-            "x" : 9.0,
-            "y" : 5.9
-          }, {
-            "x" : 17.0,
-            "y" : 5.9
-          }, {
-            "x" : 17.4,
-            "y" : 5.9
-          }, {
-            "x" : 17.4,
-            "y" : 6.300000000000001
-          }, {
-            "x" : 17.0,
-            "y" : 6.300000000000001
-          }, {
-            "x" : 9.0,
-            "y" : 6.300000000000001
-          } ]
+          "x" : 9.0,
+          "y" : 5.9,
+          "width" : 8.0,
+          "height" : 0.4,
+          "type" : "RECTANGLE"
         },
         "id" : 3
       }, {
         "shape" : {
-          "type" : "POLYGON",
-          "points" : [ {
-            "x" : 17.4,
-            "y" : 3.7
-          }, {
-            "x" : 17.4,
-            "y" : 4.1000000000000005
-          }, {
-            "x" : 17.0,
-            "y" : 4.1000000000000005
-          }, {
-            "x" : 9.0,
-            "y" : 4.1000000000000005
-          }, {
-            "x" : 9.0,
-            "y" : 3.7
-          }, {
-            "x" : 17.0,
-            "y" : 3.7
-          } ]
+          "x" : 9.0,
+          "y" : 3.7,
+          "width" : 8.0,
+          "height" : 0.4,
+          "type" : "RECTANGLE"
         },
         "id" : 4
+      }, {
+        "shape" : {
+          "x" : 17.0,
+          "y" : 5.3,
+          "width" : 0.4,
+          "height" : 1.0,
+          "type" : "RECTANGLE"
+        },
+        "id" : 5
+      }, {
+        "shape" : {
+          "x" : 17.0,
+          "y" : 3.7,
+          "width" : 0.4,
+          "height" : 1.0,
+          "type" : "RECTANGLE"
+        },
+        "id" : 6
       } ],
       "measurementAreas" : [ {
         "shape" : {

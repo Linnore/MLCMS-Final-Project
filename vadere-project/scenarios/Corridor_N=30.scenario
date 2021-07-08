@@ -1,5 +1,5 @@
 {
-  "name" : "Example02_VelocityAndkNN",
+  "name" : "Corridor_N=30",
   "description" : "",
   "release" : "1.15",
   "processWriters" : {
@@ -17,12 +17,8 @@
       "processors" : [ 4 ]
     }, {
       "type" : "org.vadere.simulator.projects.dataprocessing.outputfile.TimestepPedestrianIdOutputFile",
-      "filename" : "kNN.txt",
-      "processors" : [ 5 ]
-    }, {
-      "type" : "org.vadere.simulator.projects.dataprocessing.outputfile.TimestepPedestrianIdOutputFile",
-      "filename" : "Velocity.txt",
-      "processors" : [ 6 ]
+      "filename" : "out.txt",
+      "processors" : [ 5, 7 ]
     } ],
     "processors" : [ {
       "type" : "org.vadere.simulator.projects.dataprocessing.processor.FootStepProcessor",
@@ -41,24 +37,24 @@
         "pedestrianOverlapProcessorId" : 3
       }
     }, {
-      "type" : "org.vadere.simulator.projects.dataprocessing.processor.KNearestNeighborProcessor",
-      "id" : 5,
-      "attributesType" : "org.vadere.state.attributes.processor.AttributesKNearestNeighbor",
-      "attributes" : {
-        "measurementAreaId" : 3,
-        "kNearestNeigbors" : 5
-      }
+      "type" : "org.vadere.simulator.projects.dataprocessing.processor.PedestrianVelocityDefaultProcessor",
+      "id" : 5
     }, {
       "type" : "org.vadere.simulator.projects.dataprocessing.processor.PedestrianSpeedInAreaProcessorUsingAgentVelocity",
       "id" : 6,
       "attributesType" : "org.vadere.state.attributes.processor.AttributesSpeedInAreaProcessorUsingAgentVelocity",
       "attributes" : {
-        "measurementAreaId" : 3,
-        "pedestrianVelocityDefaultProcessor" : 7
+        "measurementAreaId" : 7,
+        "pedestrianVelocityDefaultProcessor" : 5
       }
     }, {
-      "type" : "org.vadere.simulator.projects.dataprocessing.processor.PedestrianVelocityDefaultProcessor",
-      "id" : 7
+      "type" : "org.vadere.simulator.projects.dataprocessing.processor.KNearestNeighborProcessor",
+      "id" : 7,
+      "attributesType" : "org.vadere.state.attributes.processor.AttributesKNearestNeighbor",
+      "attributes" : {
+        "measurementAreaId" : 7,
+        "kNearestNeigbors" : 5
+      }
     } ],
     "isTimestamped" : true,
     "isWriteMetaData" : false
@@ -120,7 +116,7 @@
       }
     },
     "attributesSimulation" : {
-      "finishTime" : 15.0,
+      "finishTime" : 50.0,
       "simTimeStepLength" : 0.4,
       "realTimeSimTimeRatio" : 0.1,
       "writeSimulationData" : true,
@@ -128,7 +124,7 @@
       "printFPS" : false,
       "digitsPerCoordinate" : 2,
       "useFixedSeed" : true,
-      "fixedSeed" : -6602030521629855115,
+      "fixedSeed" : 3458278650785135818,
       "simulationSeed" : 0
     },
     "attributesPsychology" : {
@@ -143,33 +139,69 @@
         "bounds" : {
           "x" : 0.0,
           "y" : 0.0,
-          "width" : 10.0,
+          "width" : 18.0,
           "height" : 10.0
         },
         "boundingBoxWidth" : 0.5,
         "bounded" : true,
         "referenceCoordinateSystem" : null
       },
-      "obstacles" : [ ],
-      "measurementAreas" : [ {
+      "obstacles" : [ {
         "shape" : {
-          "x" : 5.0,
-          "y" : 4.0,
-          "width" : 4.0,
-          "height" : 2.0,
+          "x" : 1.0,
+          "y" : 6.0,
+          "width" : 16.0,
+          "height" : 0.2,
           "type" : "RECTANGLE"
         },
         "id" : 3
+      }, {
+        "shape" : {
+          "x" : 1.0,
+          "y" : 4.0,
+          "width" : 16.0,
+          "height" : 0.2,
+          "type" : "RECTANGLE"
+        },
+        "id" : 4
+      }, {
+        "shape" : {
+          "x" : 0.8,
+          "y" : 4.0,
+          "width" : 0.2,
+          "height" : 2.2,
+          "type" : "RECTANGLE"
+        },
+        "id" : 5
+      }, {
+        "shape" : {
+          "x" : 17.0,
+          "y" : 4.0,
+          "width" : 0.2,
+          "height" : 2.2,
+          "type" : "RECTANGLE"
+        },
+        "id" : 6
+      } ],
+      "measurementAreas" : [ {
+        "shape" : {
+          "x" : 5.0,
+          "y" : 4.2,
+          "width" : 8.0,
+          "height" : 1.8,
+          "type" : "RECTANGLE"
+        },
+        "id" : 7
       } ],
       "stairs" : [ ],
       "targets" : [ {
         "id" : 2,
         "absorbing" : true,
         "shape" : {
-          "x" : 1.0,
-          "y" : 1.0,
-          "width" : 8.0,
-          "height" : 1.0,
+          "x" : 16.0,
+          "y" : 4.2,
+          "width" : 1.0,
+          "height" : 1.8,
           "type" : "RECTANGLE"
         },
         "waitingTime" : 0.0,
@@ -186,14 +218,14 @@
         "id" : 1,
         "shape" : {
           "x" : 1.0,
-          "y" : 8.0,
-          "width" : 8.0,
-          "height" : 1.0,
+          "y" : 4.2,
+          "width" : 1.0,
+          "height" : 1.8,
           "type" : "RECTANGLE"
         },
         "interSpawnTimeDistribution" : "org.vadere.state.scenario.ConstantDistribution",
         "distributionParameters" : [ 1.0 ],
-        "spawnNumber" : 50,
+        "spawnNumber" : 30,
         "maxSpawnNumberTotal" : -1,
         "startTime" : 0.0,
         "endTime" : 0.0,

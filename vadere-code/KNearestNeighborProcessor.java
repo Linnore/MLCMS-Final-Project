@@ -7,7 +7,6 @@ import org.vadere.simulator.projects.dataprocessing.datakey.PedestriansKNearestN
 import org.vadere.simulator.projects.dataprocessing.datakey.TimestepPedestrianIdKey;
 import org.vadere.state.attributes.processor.AttributesKNearestNeighbor;
 import org.vadere.state.attributes.processor.AttributesProcessor;
-
 import org.vadere.state.scenario.MeasurementArea;
 import org.vadere.state.scenario.Pedestrian;
 import org.vadere.util.geometry.shapes.VPoint;
@@ -103,9 +102,9 @@ public class KNearestNeighborProcessor extends DataProcessor<TimestepPedestrianI
 
     private ArrayList<VPoint> priorityQueueToArrayList(PriorityQueue<DistCoords> pq) {
         ArrayList<VPoint> list = new ArrayList<>();
-        for (DistCoords dc : pq) {
-            //list.add(dc.coords);
-            list.add(pq.poll().coords);
+        for (int i = 0; i < pq.size(); i++) {
+            DistCoords elem = pq.poll();
+            list.add(elem.coords);
         }
         return list;
     }
@@ -137,7 +136,6 @@ public class KNearestNeighborProcessor extends DataProcessor<TimestepPedestrianI
         @Override
         public int compare(DistCoords a, DistCoords b) {
             return a.distance < b.distance ? 1 : a.distance == b.distance ? 0 : -1;
-            //ahdkjashdkasdhaskdhask
         }
 
     }

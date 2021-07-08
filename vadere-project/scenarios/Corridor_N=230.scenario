@@ -1,5 +1,5 @@
 {
-  "name" : "Corridor_N=140",
+  "name" : "Corridor_N=230",
   "description" : "",
   "release" : "1.15",
   "processWriters" : {
@@ -15,6 +15,10 @@
       "type" : "org.vadere.simulator.projects.dataprocessing.outputfile.NoDataKeyOutputFile",
       "filename" : "overlapCount.txt",
       "processors" : [ 4 ]
+    }, {
+      "type" : "org.vadere.simulator.projects.dataprocessing.outputfile.TimestepPedestrianIdOutputFile",
+      "filename" : "out.txt",
+      "processors" : [ 5, 7 ]
     } ],
     "processors" : [ {
       "type" : "org.vadere.simulator.projects.dataprocessing.processor.FootStepProcessor",
@@ -31,6 +35,25 @@
       "attributesType" : "org.vadere.state.attributes.processor.AttributesNumberOverlapsProcessor",
       "attributes" : {
         "pedestrianOverlapProcessorId" : 3
+      }
+    }, {
+      "type" : "org.vadere.simulator.projects.dataprocessing.processor.PedestrianVelocityDefaultProcessor",
+      "id" : 5
+    }, {
+      "type" : "org.vadere.simulator.projects.dataprocessing.processor.PedestrianSpeedInAreaProcessorUsingAgentVelocity",
+      "id" : 6,
+      "attributesType" : "org.vadere.state.attributes.processor.AttributesSpeedInAreaProcessorUsingAgentVelocity",
+      "attributes" : {
+        "measurementAreaId" : 7,
+        "pedestrianVelocityDefaultProcessor" : 5
+      }
+    }, {
+      "type" : "org.vadere.simulator.projects.dataprocessing.processor.KNearestNeighborProcessor",
+      "id" : 7,
+      "attributesType" : "org.vadere.state.attributes.processor.AttributesKNearestNeighbor",
+      "attributes" : {
+        "measurementAreaId" : 7,
+        "kNearestNeigbors" : 5
       }
     } ],
     "isTimestamped" : true,
@@ -93,7 +116,7 @@
       }
     },
     "attributesSimulation" : {
-      "finishTime" : 90.0,
+      "finishTime" : 130.0,
       "simTimeStepLength" : 0.4,
       "realTimeSimTimeRatio" : 0.1,
       "writeSimulationData" : true,
@@ -202,7 +225,7 @@
         },
         "interSpawnTimeDistribution" : "org.vadere.state.scenario.ConstantDistribution",
         "distributionParameters" : [ 1.0 ],
-        "spawnNumber" : 140,
+        "spawnNumber" : 230,
         "maxSpawnNumberTotal" : -1,
         "startTime" : 0.0,
         "endTime" : 0.0,

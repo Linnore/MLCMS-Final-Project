@@ -15,6 +15,10 @@
       "type" : "org.vadere.simulator.projects.dataprocessing.outputfile.NoDataKeyOutputFile",
       "filename" : "overlapCount.txt",
       "processors" : [ 4 ]
+    }, {
+      "type" : "org.vadere.simulator.projects.dataprocessing.outputfile.TimestepPedestrianIdOutputFile",
+      "filename" : "out.txt",
+      "processors" : [ 5, 7 ]
     } ],
     "processors" : [ {
       "type" : "org.vadere.simulator.projects.dataprocessing.processor.FootStepProcessor",
@@ -31,6 +35,25 @@
       "attributesType" : "org.vadere.state.attributes.processor.AttributesNumberOverlapsProcessor",
       "attributes" : {
         "pedestrianOverlapProcessorId" : 3
+      }
+    }, {
+      "type" : "org.vadere.simulator.projects.dataprocessing.processor.PedestrianVelocityDefaultProcessor",
+      "id" : 5
+    }, {
+      "type" : "org.vadere.simulator.projects.dataprocessing.processor.PedestrianSpeedInAreaProcessorUsingAgentVelocity",
+      "id" : 6,
+      "attributesType" : "org.vadere.state.attributes.processor.AttributesSpeedInAreaProcessorUsingAgentVelocity",
+      "attributes" : {
+        "measurementAreaId" : 7,
+        "pedestrianVelocityDefaultProcessor" : 5
+      }
+    }, {
+      "type" : "org.vadere.simulator.projects.dataprocessing.processor.KNearestNeighborProcessor",
+      "id" : 7,
+      "attributesType" : "org.vadere.state.attributes.processor.AttributesKNearestNeighbor",
+      "attributes" : {
+        "measurementAreaId" : 7,
+        "kNearestNeigbors" : 5
       }
     } ],
     "isTimestamped" : true,
