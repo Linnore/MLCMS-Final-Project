@@ -1,7 +1,0 @@
-descartes
-PyYAML
-scipy
-lxml
-utm
-numpy
-gitpython
