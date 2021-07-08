@@ -1,1 +1,0 @@
-timeStep pedestrianId sk-PID5 kNearestNeighbors-PID5
