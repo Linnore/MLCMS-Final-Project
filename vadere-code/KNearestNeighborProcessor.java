@@ -112,8 +112,11 @@ public class KNearestNeighborProcessor extends DataProcessor<TimestepPedestrianI
         ArrayList<VPoint> list = new ArrayList<>();
         for (int i = 0; i < this.kNearestNeighbors; i++) {
             DistCoords elem = pq.poll();
-            list.add(elem.coords);
+            if (elem!=null) {
+                list.add(elem.coords);
+            }
         }
+        Collections.reverse(list);
         return list;
 
     }

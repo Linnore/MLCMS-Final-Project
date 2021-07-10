@@ -1,7 +1,8 @@
 {
-  "name" : "Bottleneck",
+  "name" : "Bottleneck_width=180",
   "description" : "",
   "release" : "1.15",
+  "commithash" : "No version control commit hash available!",
   "processWriters" : {
     "files" : [ {
       "type" : "org.vadere.simulator.projects.dataprocessing.outputfile.EventtimePedestrianIdOutputFile",
@@ -125,7 +126,7 @@
       "digitsPerCoordinate" : 2,
       "useFixedSeed" : true,
       "fixedSeed" : 3831130375462475975,
-      "simulationSeed" : 0
+      "simulationSeed" : 3831130375462475975
     },
     "attributesPsychology" : {
       "usePsychologyLayer" : false,
@@ -295,7 +296,7 @@
         "maxSpawnNumberTotal" : -1,
         "startTime" : 0.0,
         "endTime" : 0.0,
-        "spawnAtRandomPositions" : true,
+        "spawnAtRandomPositions" : false,
         "spawnAtGridPositionsCA" : false,
         "useFreeSpaceOnly" : false,
         "targetIds" : [ 2 ],
