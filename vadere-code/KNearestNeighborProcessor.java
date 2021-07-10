@@ -68,13 +68,20 @@ public class KNearestNeighborProcessor extends DataProcessor<TimestepPedestrianI
 
                 double distance = getDistance(p.getPosition(), neighbor.getPosition());
                 VPoint relativeCoords = new VPoint(neighbor.getPosition().x - p.getPosition().x, neighbor.getPosition().y - p.getPosition().y);
-                pq.add(new DistCoords(distance, relativeCoords));
+                DistCoords tmp = new DistCoords(distance, relativeCoords);
 
-                if (pq.size() > kNearestNeighbors) {
-                    pq.poll();
+                if (pq.size() < kNearestNeighbors){
+                    pq.add(tmp);
+                    continue;
+                }
+                if (tmp.distance >= pq.peek().distance){
+                    continue;
                 }
 
+                pq.poll();
+                pq.add(tmp);
             }
+
             //double velocity=3.14;
             double sk = calculateMeanSpacingDistance(p, pq);
             ArrayList<VPoint> kneighbors = priorityQueueToArrayList(pq);
@@ -82,6 +89,7 @@ public class KNearestNeighborProcessor extends DataProcessor<TimestepPedestrianI
 
             putValue(new TimestepPedestrianIdKey(state.getStep(), p.getId()), kNN);
         }
+
 
     }
 
@@ -102,11 +110,12 @@ public class KNearestNeighborProcessor extends DataProcessor<TimestepPedestrianI
 
     private ArrayList<VPoint> priorityQueueToArrayList(PriorityQueue<DistCoords> pq) {
         ArrayList<VPoint> list = new ArrayList<>();
-        for (int i = 0; i < pq.size(); i++) {
+        for (int i = 0; i < this.kNearestNeighbors; i++) {
             DistCoords elem = pq.poll();
             list.add(elem.coords);
         }
         return list;
+
     }
 
 
