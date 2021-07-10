@@ -1,6 +1,11 @@
 
 package org.vadere.state.attributes.processor;
 
+/**
+ * @author: Oliver Beck
+ * Attribute processor needed for k-nearest Neighbors. It contains Measurement ID and value k for the nearest neighbors.
+ *
+ */
 public class AttributesKNearestNeighbor extends AttributesProcessor {
 
     // Variables
