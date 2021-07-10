@@ -10,7 +10,7 @@ public class AttributesKNearestNeighbor extends AttributesProcessor {
 
     // Variables
     private int measurementAreaId = -1;
-    private int kNearestNeigbors = -1;
+    private int kNearestNeighbors = -1;
 
     // Getter
     public int getMeasurementAreaId() {
@@ -18,7 +18,7 @@ public class AttributesKNearestNeighbor extends AttributesProcessor {
     }
 
     public int kNearestNeighbors() {
-        return this.kNearestNeigbors;
+        return this.kNearestNeighbors;
     }
 
     // Setter
@@ -29,7 +29,7 @@ public class AttributesKNearestNeighbor extends AttributesProcessor {
 
     public void setkNearestNeigbors(int kNearestNeighbors) {
         //checkSealed();
-        this.kNearestNeigbors = kNearestNeighbors;
+        this.kNearestNeighbors = kNearestNeighbors;
     }
 
 }
