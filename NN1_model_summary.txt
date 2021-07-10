@@ -1,0 +1,2 @@
+Model Train_dataset_label Val_dataset_label Train_loss MSE AIC
+1_4 B B 0.103057 0.150038 3888.887343
