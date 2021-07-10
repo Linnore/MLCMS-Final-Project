@@ -7,13 +7,18 @@ import os
 
 
 class FullyConnectedNet(pl.LightningModule):
-    """Fully connected neural network using pytoch-lightening.
+    """Fully connected neural network using pytoch-lightening. Default optimizer used is Adam. 
+    The network architecture can be configured through "hparams", including number of hidden layers and 
+    size of each layers.
     """
 
     def __init__(self, hparams, input_size, output_size, criterion=nn.MSELoss(), activation=nn.ReLU):
         """
         Args:
-            hparams (dict): contains all hyper-parameters and configuration of this network.
+            hparams (dict): contains hyper-parameters and configuration of this network.It must contain:
+                1. numOfLayers (int): number of hidden layers
+                2. layerSize (list): the list of integers decribing the number of neurons in each hidden layer
+                3. learning_rate (float): the starting learning rate 
             input_size (int): size of each input data point
             output_size (int): size of output layer
             criterion (function): the loss function 
