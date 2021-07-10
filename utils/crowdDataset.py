@@ -2,7 +2,15 @@ import numpy as np
 import torch
 
 class crowdDataset(torch.utils.data.Dataset):
+    """The customized dataset class for dataloader in torch.
+    """
     def __init__(self, rawdataset, device="cpu"):
+        """
+
+        Args:
+            rawdataset (ndarray): the dataset output by the vadereOutputLoader, where the velocity is the 3rd column.
+            device (str, optional): the device torch will use. Defaults to "cpu".
+        """
 
         numOfCols = rawdataset.shape[1]
         mask = np.repeat(False, numOfCols)
