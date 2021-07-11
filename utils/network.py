@@ -1,9 +1,11 @@
+from logging import root
 import numpy as np
 import torch
 import torch.nn as nn
 import pytorch_lightning as pl
 import torch.nn.functional as F
 import os
+import matplotlib.pyplot as plt
 
 
 class FullyConnectedNet(pl.LightningModule):
@@ -25,7 +27,7 @@ class FullyConnectedNet(pl.LightningModule):
             activation (function, optional): the activation function. Defaults to nn.ReLu.
         """
         super().__init__()
-        self.hparams = hparams
+        self.hparams.update(hparams)
         self.input_size = input_size
         self.criterion = criterion
         self.activation = activation
@@ -89,12 +91,13 @@ class FullyConnectedNet(pl.LightningModule):
             self.model.parameters(), self.hparams["learning_rate"])
         return optim
 
-    def output_summary(self, numOfSamples, logged_matrics, train_dataset_label, val_dataset_label, summary_file_path):
+    def output_summary(self, v, vhat, sk, logged_matrics, train_dataset_label, val_dataset_label, summary_file_path):
         """Generate the summary of current model, including on which datasets it was trained and validated, and some performance indices.
         The summary will be output into a given file.
 
         Args:
-            numOfSamples (int): number of samples in the validation dataset. I.e., n in the AIC expression.
+            val (ndarray): validation dataset
+            sk (ndarray): mean space distance
             logged_matrics (dict): the losses of the model, logged when is was early-stopped.
             train_dataset_label (str): a label to represent the training dataset.
             val_dataset_label (str): a label to represent the validation dataset.
@@ -106,6 +109,7 @@ class FullyConnectedNet(pl.LightningModule):
 
         k = np.sum(p.numel() for p in self.parameters())
 
+        numOfSamples = len(sk)
         aic = 2*k + numOfSamples*np.log(mse) + numOfSamples*(1+np.log(2*np.pi))
 
         if not os.path.isfile(summary_file_path):
@@ -127,3 +131,22 @@ class FullyConnectedNet(pl.LightningModule):
 
             output.write(model_name + " " + train_dataset_label + " " +
                          val_dataset_label + " %f %f %f\n" % (train_loss, mse, aic))
+
+
+        plt.scatter(sk, v, c="blue", s=2, label="true")
+        plt.scatter(sk, vhat, c="red", s=2, label="predict")
+        plt.legend()
+
+        plt.savefig("plots/{}".format(model_name))
+        plt.show()
+
+        print(v.shape, vhat.shape, sk.shape)
+        np.savetxt(os.path.join(os.getcwd(), "model_prediction", model_name+"_prediction.txt"), np.column_stack((sk, v, vhat)), header="sk v vhat", fmt='%.8f')
+
+
+        print("Plot saved as", os.path.join(os.getcwd(), "plots", model_name+".png"))
+        print("Model prediction saved as", os.path.join(os.getcwd(), "model_prediction", model_name+"_prediction.txt"))
+
+
+
+        

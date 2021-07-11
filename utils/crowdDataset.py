@@ -14,7 +14,7 @@ class crowdDataset(torch.utils.data.Dataset):
 
         numOfCols = rawdataset.shape[1]
         mask = np.repeat(False, numOfCols)
-        mask[2] = True
+        mask[0] = True # velocity is in the column 0
         
         self.v_data = torch.tensor(rawdataset[:, mask].reshape(-1,1), dtype=torch.float32).to(device)
         self.X_data = torch.tensor(rawdataset[:, ~mask], dtype=torch.float32).to(device)

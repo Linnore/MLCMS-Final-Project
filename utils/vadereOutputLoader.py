@@ -39,26 +39,27 @@ class vadereOutputLoader:
                 rowID += 1
                 tmp_row = row.split()
                 if len(tmp_row) == numOfCols:
-                    output.write(row)
+                    v = float(tmp_row[2]) # velocity
+                    if v>0:
+                        output.write(row)
                 row = input.readline()
                 if not row:
                     break
 
-    def loadData(self, dataset_name, numOfNeighbours, need_processing=True, contain_sk=True):
+    def loadData(self, dataset_name, numOfNeighbours, need_processing=True, contain_sk=True, return_sk=True):
         """Load the dataset from vadere. Preprocess the dataset if it need processing.
 
         Args:
             dataset_name (str): name of the dataset file in the dataset folder.
             numOfNeighbours (int): number of nearest neighbours
             need_processing (bool, optional): whether the given dataset need processing. Defaults to True.
-            contain_sk (bool, optional): whether the given dataset contains the column mean spacing distance sk. Defaults to True.
+            contain_sk (bool, optional): whether the returned dataset contains the column mean spacing distance sk. Defaults to True.
+            return_sk (bool, optional): whether return the column of mean spacing distance as a single vector.
 
         Returns:
             numpy.ndarray: the loaded and processed dataset
         """
         numOfCols = 4 + 2*numOfNeighbours
-        if not contain_sk:
-            numOfCols -= 1
 
         if need_processing:
             self.process_rowdata(dataset_name, numOfCols)
@@ -67,11 +68,22 @@ class vadereOutputLoader:
         else:
             dataset_path = os.path.join(self.dataset_folder_path, dataset_name)
 
-        vadereRawdata = np.loadtxt(dataset_path, delimiter=" ", skiprows=1)
+        tmpRawdata = np.loadtxt(dataset_path, delimiter=" ", skiprows=1)
 
-        return vadereRawdata
+        mask = np.repeat(True, numOfCols)
+        mask[0] = False
+        mask[1] = False
+        if not contain_sk:
+            mask[3] = False
+        
+        vadereRawdata = tmpRawdata[:, mask]
 
-    def mergeDataset(self, dataset_name_list, merged_dataset_name, numOfNeighbours, need_processing=True, contain_sk=True):
+        if return_sk:
+            return vadereRawdata, tmpRawdata[:, 3]
+        else:
+            return vadereRawdata
+
+    def mergeDataset(self, dataset_name_list, merged_dataset_name, numOfNeighbours, need_processing=True, contain_sk=True, return_sk=True):
         """Given a list of dataset files with the same output format from vadere, merge then into a single dataset file.
 
         Args:
@@ -79,15 +91,14 @@ class vadereOutputLoader:
             merged_dataset_name (str): the name of the merged dataset file
             numOfNeighbours (int): number of nearest neighbors in the dataset
             need_processing (bool, optional): whether the datasets need to be processed. Defaults to True.
-            contain_sk (bool, optional): whether the datasets contain the mean space distance column. Defaults to True.
+            contain_sk (bool, optional): whether the returned datasets contain the mean space distance column. Defaults to True.
+            return_sk (bool, optional): whether return the column of mean spacing distance as a single vector.
 
         Returns:
             ndarray: the loaded merged dataset as ndarray
         """
 
         numOfCols = 4 + 2*numOfNeighbours
-        if not contain_sk:
-            numOfCols -= 1
         
         merged_dataset_path = os.path.join(self.processed_output_path, merged_dataset_name)
 
@@ -107,5 +118,9 @@ class vadereOutputLoader:
                         input.readline()
                         output.writelines(input.readlines())
         
-        vadereRawdata = np.loadtxt(merged_dataset_path, delimiter=" ", skiprows=1)
-        return vadereRawdata
+        if return_sk:
+            vadereRawdata, sk = self.loadData(merged_dataset_path, numOfNeighbours, need_processing=False, contain_sk=contain_sk, return_sk=return_sk)
+            return vadereRawdata, sk
+        else:
+            vadereRawdata = self.loadData(merged_dataset_path, numOfNeighbours, need_processing=False, contain_sk=contain_sk, return_sk=return_sk)
+            return vadereRawdata
