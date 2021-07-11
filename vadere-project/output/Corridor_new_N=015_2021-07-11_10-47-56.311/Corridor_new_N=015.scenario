@@ -1,7 +1,8 @@
 {
-  "name" : "Corridor_N=15",
+  "name" : "Corridor_new_N=015",
   "description" : "",
   "release" : "1.15",
+  "commithash" : "No version control commit hash available!",
   "processWriters" : {
     "files" : [ {
       "type" : "org.vadere.simulator.projects.dataprocessing.outputfile.EventtimePedestrianIdOutputFile",
@@ -18,7 +19,7 @@
     }, {
       "type" : "org.vadere.simulator.projects.dataprocessing.outputfile.TimestepPedestrianIdOutputFile",
       "filename" : "out.txt",
-      "processors" : [ 5, 7 ]
+      "processors" : [ 6, 7 ]
     } ],
     "processors" : [ {
       "type" : "org.vadere.simulator.projects.dataprocessing.processor.FootStepProcessor",
@@ -53,7 +54,7 @@
       "attributesType" : "org.vadere.state.attributes.processor.AttributesKNearestNeighbor",
       "attributes" : {
         "measurementAreaId" : 7,
-        "kNearestNeigbors" : 5
+        "kNearestNeighbors" : 10
       }
     } ],
     "isTimestamped" : true,
@@ -125,7 +126,7 @@
       "digitsPerCoordinate" : 2,
       "useFixedSeed" : true,
       "fixedSeed" : 3458278650785135818,
-      "simulationSeed" : 0
+      "simulationSeed" : 3458278650785135818
     },
     "attributesPsychology" : {
       "usePsychologyLayer" : false,
@@ -139,7 +140,7 @@
         "bounds" : {
           "x" : 0.0,
           "y" : 0.0,
-          "width" : 18.0,
+          "width" : 45.0,
           "height" : 10.0
         },
         "boundingBoxWidth" : 0.5,
@@ -149,17 +150,8 @@
       "obstacles" : [ {
         "shape" : {
           "x" : 1.0,
-          "y" : 6.0,
-          "width" : 16.0,
-          "height" : 0.2,
-          "type" : "RECTANGLE"
-        },
-        "id" : 3
-      }, {
-        "shape" : {
-          "x" : 1.0,
           "y" : 4.0,
-          "width" : 16.0,
+          "width" : 31.0,
           "height" : 0.2,
           "type" : "RECTANGLE"
         },
@@ -175,7 +167,16 @@
         "id" : 5
       }, {
         "shape" : {
-          "x" : 17.0,
+          "x" : 1.0,
+          "y" : 6.0,
+          "width" : 31.0,
+          "height" : 0.2,
+          "type" : "RECTANGLE"
+        },
+        "id" : 3
+      }, {
+        "shape" : {
+          "x" : 32.0,
           "y" : 4.0,
           "width" : 0.2,
           "height" : 2.2,
@@ -185,10 +186,10 @@
       } ],
       "measurementAreas" : [ {
         "shape" : {
-          "x" : 5.0,
-          "y" : 4.2,
-          "width" : 8.0,
-          "height" : 1.8,
+          "x" : 19.0,
+          "y" : 4.3,
+          "width" : 6.0,
+          "height" : 1.6,
           "type" : "RECTANGLE"
         },
         "id" : 7
@@ -198,7 +199,7 @@
         "id" : 2,
         "absorbing" : true,
         "shape" : {
-          "x" : 16.0,
+          "x" : 31.0,
           "y" : 4.2,
           "width" : 1.0,
           "height" : 1.8,
@@ -219,7 +220,7 @@
         "shape" : {
           "x" : 1.0,
           "y" : 4.2,
-          "width" : 1.0,
+          "width" : 30.0,
           "height" : 1.8,
           "type" : "RECTANGLE"
         },
@@ -229,7 +230,7 @@
         "maxSpawnNumberTotal" : -1,
         "startTime" : 0.0,
         "endTime" : 0.0,
-        "spawnAtRandomPositions" : false,
+        "spawnAtRandomPositions" : true,
         "spawnAtGridPositionsCA" : false,
         "useFreeSpaceOnly" : true,
         "targetIds" : [ 2 ],
