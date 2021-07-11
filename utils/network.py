@@ -91,17 +91,18 @@ class FullyConnectedNet(pl.LightningModule):
             self.model.parameters(), self.hparams["learning_rate"])
         return optim
 
-    def output_summary(self, v, vhat, sk, logged_matrics, train_dataset_label, val_dataset_label, summary_file_path):
+    def output_summary(self, v, vhat, sk, logged_matrics, train_dataset_label, val_dataset_label, summary_folder_path):
         """Generate the summary of current model, including on which datasets it was trained and validated, and some performance indices.
         The summary will be output into a given file.
 
         Args:
-            val (ndarray): validation dataset
+            v (ndarray): true veloctiy in validation dataset
+            vhat (ndarray): predicted velocity
             sk (ndarray): mean space distance
             logged_matrics (dict): the losses of the model, logged when is was early-stopped.
             train_dataset_label (str): a label to represent the training dataset.
             val_dataset_label (str): a label to represent the validation dataset.
-            summary_file_path (str): the path to a summary file for output purpose.
+            summary_folder_path (str): the path to a summary folder for output purpose.
         """
 
         mse = logged_matrics["val_loss"]
@@ -112,16 +113,17 @@ class FullyConnectedNet(pl.LightningModule):
         numOfSamples = len(sk)
         aic = 2*k + numOfSamples*np.log(mse) + numOfSamples*(1+np.log(2*np.pi))
 
-        if not os.path.isfile(summary_file_path):
-            print("Created file "+summary_file_path)
-            with open(summary_file_path, "w") as output:
+        summary_file = os.path.join(summary_folder_path, "model_summary.txt")
+        if not os.path.isfile(summary_file):
+            print("Created file "+summary_file)
+            with open(summary_file, "w") as output:
                 output.write(
                     "Model Train_dataset_label Val_dataset_label Train_loss MSE AIC\n")
         else:
-            print(summary_file_path +
+            print(summary_file +
                   " exists, model summary will be attached to the end of this file.")
 
-        with open(summary_file_path, "a") as output:
+        with open(summary_file, "a") as output:
             model_name = "%d_" % self.hparams["numOfLayers"]
             for i in range(self.hparams["numOfLayers"]-1):
                 model_name = model_name + "%d_" % self.hparams["layerSize"][i]
@@ -137,15 +139,14 @@ class FullyConnectedNet(pl.LightningModule):
         plt.scatter(sk, vhat, c="red", s=2, label="predict")
         plt.legend()
 
-        plt.savefig("plots/{}".format(model_name))
+        plt.savefig(os.path.join(summary_folder_path, "plots", model_name+".png"))
         plt.show()
 
-        print(v.shape, vhat.shape, sk.shape)
-        np.savetxt(os.path.join(os.getcwd(), "model_prediction", model_name+"_prediction.txt"), np.column_stack((sk, v, vhat)), header="sk v vhat", fmt='%.8f')
+        np.savetxt(os.path.join(summary_folder_path, "model_prediction", model_name+"_prediction.txt"), np.column_stack((sk, v, vhat)), header="sk v vhat", fmt='%.8f')
 
 
-        print("Plot saved as", os.path.join(os.getcwd(), "plots", model_name+".png"))
-        print("Model prediction saved as", os.path.join(os.getcwd(), "model_prediction", model_name+"_prediction.txt"))
+        print("Plot saved as", os.path.join(summary_folder_path, "plots", model_name+".png"))
+        print("Model prediction saved as", os.path.join(summary_folder_path, "model_prediction", model_name+"_prediction.txt"))
 
 
 
