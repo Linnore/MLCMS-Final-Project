@@ -6,7 +6,7 @@ import pytorch_lightning as pl
 import torch.nn.functional as F
 import os
 import matplotlib.pyplot as plt
-
+import datetime
 
 class FullyConnectedNet(pl.LightningModule):
     """Fully connected neural network using pytoch-lightening. Default optimizer used is Adam. 
@@ -32,6 +32,15 @@ class FullyConnectedNet(pl.LightningModule):
         self.criterion = criterion
         self.activation = activation
         self.lr = hparams["learning_rate"]
+
+
+        model_name = "%d_" % self.hparams["numOfLayers"]
+        for i in range(self.hparams["numOfLayers"]-1):
+            model_name = model_name + "%d_" % self.hparams["layerSize"][i]
+
+        model_name = model_name + \
+            "%d" % self.hparams["layerSize"][self.hparams["numOfLayers"]-1]
+        self.version = model_name + "_" + datetime.datetime.now().strftime("%Y%m%d-%H%M%S")
 
         self.current_batch_step = 0
 
@@ -124,13 +133,7 @@ class FullyConnectedNet(pl.LightningModule):
                   " exists, model summary will be attached to the end of this file.")
 
         with open(summary_file, "a") as output:
-            model_name = "%d_" % self.hparams["numOfLayers"]
-            for i in range(self.hparams["numOfLayers"]-1):
-                model_name = model_name + "%d_" % self.hparams["layerSize"][i]
-
-            model_name = model_name + \
-                "%d" % self.hparams["layerSize"][self.hparams["numOfLayers"]-1]
-
+            model_name = self.version
             output.write(model_name + " " + train_dataset_label + " " +
                          val_dataset_label + " %f %f %f\n" % (train_loss, mse, aic))
 
