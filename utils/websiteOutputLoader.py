@@ -57,10 +57,19 @@ class websiteOutputLoader:
                         continue
                     else:
                         if kneighbors.qsize() < kneighbors.maxsize:
-                            distance = ((((ped["x"] - neighbor["x"]) ** 2 + (ped["x"] - neighbor["x"])) ** 2) ** 0.5)
+                            distance = -((((ped["x"] - neighbor["x"]) ** 2 + (ped["y"] - neighbor["y"])**2)) ** 0.5)
                             kneighbors.put([distance, ((neighbor["x"] - ped["x"]), (neighbor["y"] - ped["y"]))])
-                output.write(
-                    self.calculateSk(ped, kneighbors))
+                        else:
+                            [x, (y, z)] = kneighbors.get()
+                            distance = -((((ped["x"] - neighbor["x"]) ** 2 + (ped["y"] - neighbor["y"]) ** 2)) ** 0.5)
+                            if x<distance:
+                                kneighbors.put([distance, ((neighbor["x"] - ped["x"]), (neighbor["y"] - ped["y"]))])
+                            else:
+                                kneighbors.put([x, (y, z)])
+
+
+
+                output.write(self.calculateSk(ped, kneighbors))
         output.close()
 
         return df
@@ -83,11 +92,9 @@ class websiteOutputLoader:
 
         for i in range(size):
             [x, (y, z)] = kneighbors.get()
-            stringy += str(y) + " " + str(z) + " "
-            sk += x
-            if size == 0:
-                sk = -1
-            else:
-                sk /= size
-        return str(ped["frame"]) + " " + str(ped["pid"]) + " " + str(ped["speed"]) + " " + str(
-            sk) + " " + stringy + "\n"
+            stringy = str(y) + " " + str(z) + " "+stringy
+            sk += -x
+        #if(size==0):
+        #    return ""
+        sk /= size
+        return str(ped["frame"]) + " " + str(ped["pid"]) + " " + str(ped["speed"]) + " " + str(sk) + " " + stringy + "\n"
