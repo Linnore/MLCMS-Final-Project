@@ -57,13 +57,13 @@ class websiteOutputLoader:
                         continue
                     else:
                         if kneighbors.qsize() < kneighbors.maxsize:
-                            distance = -((((ped["x"] - neighbor["x"]) ** 2 + (ped["y"] - neighbor["y"])**2)) ** 0.5)
-                            kneighbors.put([distance, ((neighbor["x"] - ped["x"]), (neighbor["y"] - ped["y"]))])
+                            distance = -((((ped["x"] - neighbor["x"]) ** 2 + (ped["y"] - neighbor["y"])**2)) ** 0.5)/100
+                            kneighbors.put([distance, ((neighbor["x"] - ped["x"])/100, (neighbor["y"] - ped["y"])/100)])
                         else:
                             [x, (y, z)] = kneighbors.get()
-                            distance = -((((ped["x"] - neighbor["x"]) ** 2 + (ped["y"] - neighbor["y"]) ** 2)) ** 0.5)
+                            distance = -((((ped["x"] - neighbor["x"]) ** 2 + (ped["y"] - neighbor["y"]) ** 2)) ** 0.5)/100
                             if x<distance:
-                                kneighbors.put([distance, ((neighbor["x"] - ped["x"]), (neighbor["y"] - ped["y"]))])
+                                kneighbors.put([distance, ((neighbor["x"] - ped["x"])/100, (neighbor["y"] - ped["y"])/100)])
                             else:
                                 kneighbors.put([x, (y, z)])
 
