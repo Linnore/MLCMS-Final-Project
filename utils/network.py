@@ -141,6 +141,8 @@ class FullyConnectedNet(pl.LightningModule):
         plt.scatter(sk, v, c="blue", s=2, label="true")
         plt.scatter(sk, vhat, c="red", s=2, label="predict")
         plt.legend()
+        plt.xlabel("sk")
+        plt.ylabel("v")
 
         plt.savefig(os.path.join(summary_folder_path, "plots", model_name+".png"))
         plt.show()
