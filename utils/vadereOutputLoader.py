@@ -46,7 +46,7 @@ class vadereOutputLoader:
                 if not row:
                     break
 
-    def loadData(self, dataset_name, numOfNeighbours, need_processing=True, contain_sk=True, return_sk=True):
+    def loadData(self, dataset_name, numOfNeighbours, need_processing=True, contain_sk=True, return_sk=False):
         """Load the dataset from vadere. Preprocess the dataset if it need processing.
 
         Args:
@@ -54,7 +54,7 @@ class vadereOutputLoader:
             numOfNeighbours (int): number of nearest neighbours
             need_processing (bool, optional): whether the given dataset need processing. Defaults to True.
             contain_sk (bool, optional): whether the returned dataset contains the column mean spacing distance sk. Defaults to True.
-            return_sk (bool, optional): whether return the column of mean spacing distance as a single vector.
+            return_sk (bool, optional): whether return the column of mean spacing distance as a single vector. Defaults to False.
 
         Returns:
             numpy.ndarray: the loaded and processed dataset
@@ -83,7 +83,7 @@ class vadereOutputLoader:
         else:
             return vadereRawdata
 
-    def mergeDataset(self, dataset_name_list, merged_dataset_name, numOfNeighbours, need_processing=True, contain_sk=True, return_sk=True):
+    def mergeDataset(self, dataset_name_list, merged_dataset_name, numOfNeighbours, need_processing=True, contain_sk=True, return_sk=False):
         """Given a list of dataset files with the same output format from vadere, merge then into a single dataset file.
 
         Args:
@@ -92,7 +92,7 @@ class vadereOutputLoader:
             numOfNeighbours (int): number of nearest neighbors in the dataset
             need_processing (bool, optional): whether the datasets need to be processed. Defaults to True.
             contain_sk (bool, optional): whether the returned datasets contain the mean space distance column. Defaults to True.
-            return_sk (bool, optional): whether return the column of mean spacing distance as a single vector.
+            return_sk (bool, optional): whether return the column of mean spacing distance as a single vector. Defaults to False.
 
         Returns:
             ndarray: the loaded merged dataset as ndarray
