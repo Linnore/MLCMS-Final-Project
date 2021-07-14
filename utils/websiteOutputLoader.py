@@ -72,7 +72,7 @@ class websiteOutputLoader:
 
         for index, row in df.iloc[1:].iterrows():
             pid, frame, x, y = row["pid"], row["frame"], row['x'], row['y']
-            speed = self.calculateSpeed(pid, frame, x, y, pid_old, frame_old, x_old, y_old)
+            speed = self.calculateSpeed(pid, frame, x, y, pid_old, frame_old, x_old, y_old, frame_rate)
 
             df_speed.append(speed)
 
@@ -113,7 +113,7 @@ class websiteOutputLoader:
                             else:
                                 kneighbors.put([x, (y, z)])
 
-                output.write(self.calculateSk(ped, kneighbors, numOfNeighbours, frame_rate))
+                output.write(self.calculateSk(ped, kneighbors, numOfNeighbours))
         output.close()
 
         return df
@@ -144,3 +144,45 @@ class websiteOutputLoader:
         #    return ""
         sk /= size
         return str(ped["frame"]) + " " + str(ped["pid"]) + " " + str(ped["speed"]) + " " + str(sk) + stringy + "\n"
+
+    def mergeDataset(self, dataset_name_list, merged_dataset_name, numOfNeighbours,frame_rate=16, force_processing=False,
+                     contain_sk=True, return_sk=False):
+        """Given a list of dataset files with the same output format from vadere, merge then into a single dataset file.
+
+        Args:
+            dataset_name_list (list): list of names of the dataset files
+            merged_dataset_name (str): the name of the merged dataset file
+            numOfNeighbours (int): number of nearest neighbors in the dataset
+            need_processing (bool, optional): whether the datasets need to be processed. Defaults to True.
+            contain_sk (bool, optional): whether the returned datasets contain the mean space distance column. Defaults to True.
+            return_sk (bool, optional): whether return the column of mean spacing distance as a single vector. Defaults to False.
+
+        Returns:
+            ndarray: the loaded merged dataset as ndarray
+        """
+
+        numOfCols = 4 + 2 * numOfNeighbours
+
+        merged_dataset_path = os.path.join(self.processed_output_path, merged_dataset_name)
+        print(merged_dataset_path)
+
+        with open(merged_dataset_path, "w") as output:
+            for i, dataset_name in enumerate(dataset_name_list):
+
+                self.process_rowdata(dataset_name, numOfNeighbours, frame_rate, force_processing)
+                dataset_path = os.path.join(self.processed_output_path, "processed_" + dataset_name)
+
+                with open(dataset_path, "r") as input:
+                    if i == 0:
+                        output.writelines(input.readlines())
+                    else:
+                        input.readline()
+                        output.writelines(input.readlines())
+
+        if return_sk:
+            vadereRawdata, sk = self.loadData(merged_dataset_name, numOfNeighbours, force_processing=False,contain_sk=contain_sk, return_sk=return_sk)
+            return vadereRawdata, sk
+        else:
+            vadereRawdata = self.loadData(merged_dataset_name, numOfNeighbours, force_processing=False,
+                                          contain_sk=contain_sk, return_sk=return_sk)
+            return vadereRawdata
