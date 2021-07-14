@@ -6486,3 +6486,14 @@ timeStep pedestrianId speedInAreaUsingAgentVelocity-PID6 sk-PID7 kNearestNeighbo
 126 46 -1.0 N/A N/A
 126 61 -1.0 N/A N/A
 126 93 -1.0 N/A N/A
+127 46 -1.0 N/A N/A
+127 61 -1.0 N/A N/A
+127 93 -1.0 N/A N/A
+128 46 -1.0 N/A N/A
+128 61 -1.0 N/A N/A
+129 46 -1.0 N/A N/A
+129 61 -1.0 N/A N/A
+130 46 -1.0 N/A N/A
+130 61 -1.0 N/A N/A
+131 46 -1.0 N/A N/A
+132 46 -1.0 N/A N/A

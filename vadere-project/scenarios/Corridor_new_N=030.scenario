@@ -53,7 +53,7 @@
       "attributesType" : "org.vadere.state.attributes.processor.AttributesKNearestNeighbor",
       "attributes" : {
         "measurementAreaId" : 7,
-        "kNearestNeighbors" : 10
+        "kNearestNeigbors" : 10
       }
     } ],
     "isTimestamped" : true,
