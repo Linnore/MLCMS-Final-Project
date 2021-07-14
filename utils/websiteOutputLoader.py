@@ -45,7 +45,7 @@ class websiteOutputLoader:
         mask[1] = False
         if not contain_sk:
             mask[3] = False
-        print(tmpRawdata)
+
         websiteRawdata = tmpRawdata[:, mask]
         # different return types based on the flag for returning sk or not (we have tw different NN to train)
         if return_sk:
@@ -83,7 +83,7 @@ class websiteOutputLoader:
         pid_old, frame_old, x_old, y_old = df.iloc[0]
 
         # get first line of row , initialize
-
+        #calculating speed by iterating over two position values, with speed calculating method
         for index, row in df.iloc[1:].iterrows():
             pid, frame, x, y = row["pid"], row["frame"], row['x'], row['y']
             speed = self.calculateSpeed(pid, frame, x, y, pid_old, frame_old, x_old, y_old, frame_rate)
@@ -92,6 +92,7 @@ class websiteOutputLoader:
 
             pid_old, frame_old, x_old, y_old = pid, frame, x, y
 
+        #rearrange columns and add speed column
         df['speed'] = df_speed
 
         columns_titles = ["frame", "pid", "speed", "x", "y"]
@@ -101,17 +102,20 @@ class websiteOutputLoader:
         output = open(output_path, "w")
         output.write("timeStep pedestrianId speed sk kNearestNeighbors" + "\n")
 
-        # specific time frame
+        # 3 loops:  first loop to put each time frame into one dataframe,
+        #           second loop to iterate over all the pedestrians in the time frame (everyone gets an output line)
+        #           third loop to iterate over all neighbors in that same time frame  to get the relative distances and compute the sk (speed already is added)
         for i, timeGroup in df.groupby("frame"):
 
             for k, ped in timeGroup.iterrows():
                 kneighbors = PriorityQueue(numOfNeighbours)
 
                 for l, neighbor in timeGroup.iterrows():
-
+                    #check pedestrian isnt its own neighbor
                     if neighbor["pid"] == ped["pid"]:
                         continue
                     else:
+                        #manage priority queue, note distacne is saved as -distnace to produce the desired max-heap
                         if kneighbors.qsize() < numOfNeighbours:
                             distance = -((((ped["x"] - neighbor["x"]) ** 2 + (
                                     ped["y"] - neighbor["y"]) ** 2)) ** 0.5) / 100
@@ -126,7 +130,7 @@ class websiteOutputLoader:
                                     [distance, ((neighbor["x"] - ped["x"]) / 100, (neighbor["y"] - ped["y"]) / 100)])
                             else:
                                 kneighbors.put([x, (y, z)])
-
+                #the heart, produces output lines for all pedestrians
                 output.write(self.produceOutputLine(ped, kneighbors, numOfNeighbours))
         output.close()
 
@@ -172,9 +176,10 @@ class websiteOutputLoader:
         stringy = ""
         sk = 0
         size = kneighbors.qsize()
-        # print(size)
-        # We only want full lines don't we?
+
+        # We only want full lines
         if size != numOfNeighbours: return ""
+        # pedestrians that couldnt calculate a speed (need two timesteps for each line get ignored)
         if ped["speed"] == -1: return ""
 
         for i in range(size):
@@ -207,6 +212,7 @@ class websiteOutputLoader:
 
         merged_dataset_path = os.path.join(self.processed_output_path, merged_dataset_name)
 
+        #if needed process over the dataset, if not needed use the already processed
         with open(merged_dataset_path, "w") as output:
             for i, dataset_name in enumerate(dataset_name_list):
 
@@ -224,6 +230,7 @@ class websiteOutputLoader:
                         input.readline()
                         output.writelines(input.readlines())
 
+        # again two different NN, one wants sk one doesnt, we return according to flag
         if return_sk:
             vadereRawdata, sk = self.loadData(merged_dataset_name, numOfNeighbours, need_processing=False,
                                               contain_sk=contain_sk, return_sk=return_sk)
