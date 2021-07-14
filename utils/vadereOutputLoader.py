@@ -119,8 +119,8 @@ class vadereOutputLoader:
                         output.writelines(input.readlines())
         
         if return_sk:
-            vadereRawdata, sk = self.loadData(merged_dataset_path, numOfNeighbours, need_processing=False, contain_sk=contain_sk, return_sk=return_sk)
+            vadereRawdata, sk = self.loadData(merged_dataset_name, numOfNeighbours, need_processing=False, contain_sk=contain_sk, return_sk=return_sk)
             return vadereRawdata, sk
         else:
-            vadereRawdata = self.loadData(merged_dataset_path, numOfNeighbours, need_processing=False, contain_sk=contain_sk, return_sk=return_sk)
+            vadereRawdata = self.loadData(merged_dataset_name, numOfNeighbours, need_processing=False, contain_sk=contain_sk, return_sk=return_sk)
             return vadereRawdata
