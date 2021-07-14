@@ -128,7 +128,7 @@ class FullyConnectedNet(pl.LightningModule):
             print("Created file "+summary_file)
             with open(summary_file, "w") as output:
                 output.write(
-                    "Model Train_dataset_label Val_dataset_label Train_loss MSE AIC\n")
+                    "Model Train_dataset_label Val_dataset_label Train_loss Test_loss AIC\n")
         else:
             print(summary_file +
                   " exists, model summary will be attached to the end of this file.")
