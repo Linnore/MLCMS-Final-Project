@@ -14,8 +14,8 @@ class websiteOutputLoader:
         if self.processed_output_path is None:
             self.processed_output_path = dataset_folder_path
 
-    def loadData(self, dataset_name, numOfNeighbours, need_processing=True, contain_sk=True, return_sk=True):
-        """Load the dataset from vadere. Preprocess the dataset if it need processing.
+    def loadData(self, dataset_name, numOfNeighbours,frame_rate=16, force_processing=False, contain_sk=True, return_sk=True):
+        """Load the dataset from we obtained from the website . Preprocess the dataset if it need processing.
 
         Args:
             dataset_name (str): name of the dataset file in the dataset folder.
@@ -29,19 +29,16 @@ class websiteOutputLoader:
         """
         numOfCols = 4 + 2 * numOfNeighbours
 
-        if need_processing:
-            self.process_rowdata(dataset_name,numOfNeighbours)
-            dataset_path = os.path.join(self.processed_output_path, "processed_" + dataset_name)
-        else:
-            dataset_path = os.path.join(self.dataset_folder_path, dataset_name)
+        self.process_rowdata(dataset_name, numOfNeighbours,frame_rate, force_processing)
+        dataset_path = os.path.join(self.processed_output_path, "processed_" + dataset_name)
 
-        tmpRawdata = np.loadtxt(dataset_path, delimiter=" ")
+        tmpRawdata = np.loadtxt(dataset_path, delimiter=" ", skiprows=1)
+
         mask = np.repeat(True, numOfCols)
         mask[0] = False
         mask[1] = False
         if not contain_sk:
             mask[3] = False
-
 
         websiteRawdata = tmpRawdata[:, mask]
 
@@ -50,25 +47,34 @@ class websiteOutputLoader:
         else:
             return websiteRawdata
 
-    def process_rowdata(self,dataset_name,numOfNeighbours,need_processing=True,contain_sk=True,return_sk=True):
+    def process_rowdata(self, dataset_name, numOfNeighbours,frame_rate=16, force_processing=False, contain_sk=True, return_sk=True):
+
+
         dataset_path = os.path.join(self.dataset_folder_path, dataset_name)
         output_path = os.path.join(self.processed_output_path, "processed_" + dataset_name)
 
+        # if im not forced to process or there already is a file there i dont process
+        if (not force_processing) and os.path.isfile(output_path):
+            return
+
         # dt = np.dtype[(('PedID', np.int), ('Frame', np.int), ('X', np.double), ('Y', np.double))]
         # dataset = np.loadtxt(dataset_path)
-        df = pd.read_csv(dataset_path, sep=" ", header=None)
+        df = pd.read_csv(dataset_path, sep=" ", header=None, usecols=[0, 1, 2, 3], comment="#")
         df.columns = ["pid", "frame", "x", "y"]
 
         # add speed and sort by frame
 
+        # df_speed = pd.DataFrame(columns=['Speed'])
+        df_speed = [-1]
+        pid_old, frame_old, x_old, y_old = df.iloc[0]
 
-        df_speed = pd.DataFrame(columns=['Speed'])
-        for index, row in df.iterrows():
+        # get first line of row , initialize
+
+        for index, row in df.iloc[1:].iterrows():
             pid, frame, x, y = row["pid"], row["frame"], row['x'], row['y']
-
             speed = self.calculateSpeed(pid, frame, x, y, pid_old, frame_old, x_old, y_old)
 
-            df_speed = df_speed.append({'Speed': speed}, ignore_index=True)
+            df_speed.append(speed)
 
             pid_old, frame_old, x_old, y_old = pid, frame, x, y
 
@@ -79,10 +85,11 @@ class websiteOutputLoader:
         df = df.sort_values(by=['frame'])
 
         output = open(output_path, "w")
+        output.write("timeStep pedestrianId speed sk kNearestNeighbors" + "\n")
 
         # specific time frame
         for i, timeGroup in df.groupby("frame"):
-            #print(timeGroup)
+            # print(timeGroup)
             for k, ped in timeGroup.iterrows():
                 kneighbors = PriorityQueue(numOfNeighbours)
 
@@ -92,46 +99,48 @@ class websiteOutputLoader:
                         continue
                     else:
                         if kneighbors.qsize() < numOfNeighbours:
-                            distance = -((((ped["x"] - neighbor["x"]) ** 2 + (ped["y"] - neighbor["y"])**2)) ** 0.5)/100
-                            kneighbors.put([distance, ((neighbor["x"] - ped["x"])/100, (neighbor["y"] - ped["y"])/100)])
+                            distance = -((((ped["x"] - neighbor["x"]) ** 2 + (
+                                    ped["y"] - neighbor["y"]) ** 2)) ** 0.5) / 100
+                            kneighbors.put(
+                                [distance, ((neighbor["x"] - ped["x"]) / 100, (neighbor["y"] - ped["y"]) / 100)])
                         else:
                             [x, (y, z)] = kneighbors.get()
-                            distance = -((((ped["x"] - neighbor["x"]) ** 2 + (ped["y"] - neighbor["y"]) ** 2)) ** 0.5)/100
-                            if x<distance:
-                                kneighbors.put([distance, ((neighbor["x"] - ped["x"])/100, (neighbor["y"] - ped["y"])/100)])
+                            distance = -((((ped["x"] - neighbor["x"]) ** 2 + (
+                                    ped["y"] - neighbor["y"]) ** 2)) ** 0.5) / 100
+                            if x < distance:
+                                kneighbors.put(
+                                    [distance, ((neighbor["x"] - ped["x"]) / 100, (neighbor["y"] - ped["y"]) / 100)])
                             else:
                                 kneighbors.put([x, (y, z)])
 
-
-
-                output.write(self.calculateSk(ped, kneighbors,numOfNeighbours))
+                output.write(self.calculateSk(ped, kneighbors, numOfNeighbours, frame_rate))
         output.close()
 
         return df
 
-    def calculateSpeed(self, pid, frame, x, y, pid_old, frame_old, x_old, y_old):
+    def calculateSpeed(self, pid, frame, x, y, pid_old, frame_old, x_old, y_old,frame_rate):
         # 25frames per second, 100cm in meter
         if pid == pid_old:
-            return ((((x - x_old) ** 2 + (y - y_old)) ** 2) ** 0.5) * (25 / 100) / (frame - frame_old)
+            return ((((x - x_old) ** 2 + (y - y_old)) ** 2) ** 0.5) * (frame_rate / 100) / (frame - frame_old)
 
         else:
             return -1
 
-    def calculateSk(self, ped, kneighbors,numOfNeighbours):
+    def calculateSk(self, ped, kneighbors, numOfNeighbours):
 
         stringy = ""
         sk = 0
         size = kneighbors.qsize()
-        #print(size)
+        # print(size)
         # We only want full lines don't we?
         if size != numOfNeighbours: return ""
         if ped["speed"] == -1: return ""
 
         for i in range(size):
             [x, (y, z)] = kneighbors.get()
-            stringy = " "+str(y) + " " + str(z) + stringy
+            stringy = " " + str(y) + " " + str(z) + stringy
             sk += -x
-        #if(size==0):
+        # if(size==0):
         #    return ""
         sk /= size
         return str(ped["frame"]) + " " + str(ped["pid"]) + " " + str(ped["speed"]) + " " + str(sk) + stringy + "\n"
