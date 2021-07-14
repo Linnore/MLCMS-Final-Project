@@ -98,6 +98,7 @@ class FullyConnectedNet(pl.LightningModule):
     def configure_optimizers(self):
         optim = torch.optim.Adam(
             self.model.parameters(), self.hparams["learning_rate"])
+        # optim = torch.optim.SGD(self.model.parameters(),self.hparams["learning_rate"], momentum=.9)
         return optim
 
     def output_summary(self, v, vhat, sk, logged_matrics, train_dataset_label, val_dataset_label, summary_folder_path):

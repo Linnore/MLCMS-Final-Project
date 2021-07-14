@@ -29,7 +29,7 @@ class websiteOutputLoader:
         Returns:
             numpy.ndarray: the loaded and processed dataset
         """
-        #numOfCols = 4 + 2 * numOfNeighbours
+        numOfCols = 4 + 2 * numOfNeighbours
 
         #checking if dataset flag should be processed (or it has been already) and building it accordingly
         if need_processing:
