@@ -114,7 +114,7 @@ class FullyConnectedNet(pl.LightningModule):
             summary_folder_path (str): the path to a summary folder for output purpose.
         """
 
-        mse = logged_matrics["val_loss"]
+        mse = np.sum((v-vhat)**2)/len(v)
         train_loss = logged_matrics["train_loss"]
 
         k = np.sum(p.numel() for p in self.parameters())
