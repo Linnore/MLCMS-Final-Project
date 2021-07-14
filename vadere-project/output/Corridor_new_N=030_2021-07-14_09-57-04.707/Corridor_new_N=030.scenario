@@ -1,8 +1,8 @@
 {
-  "name" : "Corridor_new_N=085",
+  "name" : "Corridor_new_N=030",
   "description" : "",
   "release" : "1.15",
-  "commithash" : "No version control commit hash available!",
+  "commithash" : "fatal:",
   "processWriters" : {
     "files" : [ {
       "type" : "org.vadere.simulator.projects.dataprocessing.outputfile.EventtimePedestrianIdOutputFile",
@@ -54,7 +54,7 @@
       "attributesType" : "org.vadere.state.attributes.processor.AttributesKNearestNeighbor",
       "attributes" : {
         "measurementAreaId" : 7,
-        "kNearestNeighbors" : 10
+        "kNearestNeigbors" : 10
       }
     } ],
     "isTimestamped" : true,
@@ -226,7 +226,7 @@
         },
         "interSpawnTimeDistribution" : "org.vadere.state.scenario.ConstantDistribution",
         "distributionParameters" : [ 1.0 ],
-        "spawnNumber" : 85,
+        "spawnNumber" : 30,
         "maxSpawnNumberTotal" : -1,
         "startTime" : 0.0,
         "endTime" : 0.0,
